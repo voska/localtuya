@@ -517,9 +517,7 @@ class LocalTuyaOptionsFlowHandler(config_entries.OptionsFlow):
 
         return self.async_show_form(
             step_id="add_device",
-            data_schema=devices_schema(
-                devices, cloud_devs
-            ),
+            data_schema=devices_schema(devices, cloud_devs),
             errors=errors,
         )
 

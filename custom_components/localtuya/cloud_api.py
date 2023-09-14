@@ -153,7 +153,11 @@ class TuyaCloudApi:
                 # subdevice (Zigbee): will use the cid as the real id
                 dev_id = dev[CONF_NODEID]
                 for dev2 in r_json["result"]:
-                    if dev[CONF_LOCAL_KEY] == dev2[CONF_LOCAL_KEY] and dev2["ip"] != "" and CONF_NODEID not in dev2:
+                    if (
+                        dev[CONF_LOCAL_KEY] == dev2[CONF_LOCAL_KEY]
+                        and dev2["ip"] != ""
+                        and CONF_NODEID not in dev2
+                    ):
                         # _LOGGER.debug("FATHER IS %s", dev2[CONF_ID])
                         dev[CONF_GW_ID] = dev2[CONF_ID]
 
