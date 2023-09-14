@@ -8,8 +8,6 @@ import time
 
 import requests
 
-_LOGGER = logging.getLogger(__name__)
-
 from homeassistant.const import (
     CONF_ID,
 )
@@ -20,6 +18,9 @@ from .const import (
     CONF_NODEID,
     CONF_SUB,
 )
+
+_LOGGER = logging.getLogger(__name__)
+
 
 # Signature algorithm.
 def calc_sign(msg, key):

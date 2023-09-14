@@ -1159,8 +1159,6 @@ class TuyaProtocol(asyncio.Protocol, ContextualLogger):
             else:
                 json_data["uid"] = self.id
         if "cid" in json_data:
-#             if command in (CONTROL, CONTROL_NEW):
-#                 json_data = {"cid": "", "t": ""}
             if devId is not None:
                 json_data["cid"] = devId
             else:
