@@ -190,7 +190,7 @@ class TuyaDevice(pytuya.TuyaListener, pytuya.ContextualLogger):
                 self._dev_config_entry[CONF_HOST],
                 self._dev_config_entry[CONF_DEVICE_ID],
                 self._local_key,
-                float(self._dev_config_entry[CONF_PROTOCOL_VERSION]),
+                self._dev_config_entry[CONF_PROTOCOL_VERSION],
                 self._dev_config_entry.get(CONF_ENABLE_DEBUG, False),
                 self,
             )

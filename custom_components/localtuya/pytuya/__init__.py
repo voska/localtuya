@@ -215,6 +215,25 @@ payload_dict = {
         },
         DP_QUERY: {"command_override": DP_QUERY_NEW},
     },
+    # subdevices (namely: Zigbee devices), that can be operated through a gateway
+    "sub_device": {
+        AP_CONFIG: {  # [BETA] Set Control Values on Device
+            "command": {"cid": "", "t": ""},
+        },
+        CONTROL: {  # Set Control Values on Device
+            "command": {"cid": "", "t": ""},
+        },
+        STATUS: {  # Get Status from Device
+            "command": {"cid": ""},
+        },
+        HEART_BEAT: {"command": {"cid": ""}},
+        DP_QUERY: {  # Get Data Points from Device
+            "command": {"cid": "", "t": ""},
+        },
+        CONTROL_NEW: {"command": {"cid": "", "t": ""}},
+        DP_QUERY_NEW: {"command": {"cid": "", "t": ""}},
+        UPDATEDPS: {"command": {"dpId": [18, 19, 20]}},
+    },
 }
 
 
@@ -573,6 +592,10 @@ class TuyaProtocol(asyncio.Protocol, ContextualLogger):
         self.dev_type = "type_0a"
         self.dps_to_request = {}
 
+        if protocol_version == "sub_device":
+            self.dev_type = protocol_version
+            protocol_version = "3.3"
+
         if protocol_version:
             self.set_version(float(protocol_version))
         else:
@@ -867,7 +890,7 @@ class TuyaProtocol(asyncio.Protocol, ContextualLogger):
             if "dps" in data:
                 self.dps_cache.update(data["dps"])
 
-            if self.dev_type == "type_0a":
+            if self.dev_type in ("type_0a", "sub_device"):
                 return self.dps_cache
         self.debug("Detected dps: %s", self.dps_cache)
         return self.dps_cache
@@ -1135,6 +1158,13 @@ class TuyaProtocol(asyncio.Protocol, ContextualLogger):
                 json_data["uid"] = uid
             else:
                 json_data["uid"] = self.id
+        if "cid" in json_data:
+#             if command in (CONTROL, CONTROL_NEW):
+#                 json_data = {"cid": "", "t": ""}
+            if devId is not None:
+                json_data["cid"] = devId
+            else:
+                json_data["cid"] = self.id
         if "t" in json_data:
             if json_data["t"] == "int":
                 json_data["t"] = int(time.time())
