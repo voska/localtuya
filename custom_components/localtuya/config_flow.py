@@ -31,6 +31,7 @@ from .const import (
     ATTR_UPDATED_AT,
     CONF_ACTION,
     CONF_ADD_DEVICE,
+    CONF_DEVICE_CID,
     CONF_DPS_STRINGS,
     CONF_EDIT_DEVICE,
     CONF_ENABLE_DEBUG,
@@ -39,6 +40,7 @@ from .const import (
     CONF_MANUAL_DPS,
     CONF_MODEL,
     CONF_NO_CLOUD,
+    CONF_NODEID,
     CONF_PRODUCT_NAME,
     CONF_PROTOCOL_VERSION,
     CONF_RESET_DPIDS,
@@ -92,9 +94,10 @@ DEVICE_SCHEMA = vol.Schema(
         vol.Required(CONF_FRIENDLY_NAME): cv.string,
         vol.Required(CONF_HOST): cv.string,
         vol.Required(CONF_DEVICE_ID): cv.string,
+        vol.Optional(CONF_DEVICE_CID): cv.string,
         vol.Required(CONF_LOCAL_KEY): cv.string,
         vol.Required(CONF_PROTOCOL_VERSION, default="3.3"): vol.In(
-            ["3.1", "3.2", "3.3", "3.4", "sub_device"]
+            ["3.1", "3.2", "3.3", "3.4"]
         ),
         vol.Required(CONF_ENABLE_DEBUG, default=False): bool,
         vol.Optional(CONF_SCAN_INTERVAL): int,
@@ -138,9 +141,10 @@ def options_schema(entities):
         {
             vol.Required(CONF_FRIENDLY_NAME): cv.string,
             vol.Required(CONF_HOST): cv.string,
+            vol.Optional(CONF_DEVICE_CID): cv.string,
             vol.Required(CONF_LOCAL_KEY): cv.string,
             vol.Required(CONF_PROTOCOL_VERSION, default="3.3"): vol.In(
-                ["3.1", "3.2", "3.3", "3.4", "sub_device"]
+                ["3.1", "3.2", "3.3", "3.4"]
             ),
             vol.Required(CONF_ENABLE_DEBUG, default=False): bool,
             vol.Optional(CONF_SCAN_INTERVAL): int,
@@ -246,6 +250,7 @@ async def validate_input(hass: core.HomeAssistant, data):
             data[CONF_DEVICE_ID],
             data[CONF_LOCAL_KEY],
             data[CONF_PROTOCOL_VERSION],
+            data[CONF_DEVICE_CID],
             data[CONF_ENABLE_DEBUG],
         )
         if CONF_RESET_DPIDS in data:
@@ -647,14 +652,14 @@ class LocalTuyaOptionsFlowHandler(config_entries.OptionsFlow):
                 if dev_id in cloud_devs:
                     defaults[CONF_LOCAL_KEY] = cloud_devs[dev_id].get(CONF_LOCAL_KEY)
                     defaults[CONF_FRIENDLY_NAME] = cloud_devs[dev_id].get(CONF_NAME)
-                    if cloud_devs[dev_id][CONF_SUB]:
+                    if cloud_devs[dev_id][CONF_SUB] and CONF_NODEID in cloud_devs[dev_id]:
                         # this is a subdevice (Zigbee)
                         gw_id = cloud_devs[dev_id].get(CONF_GW_ID)
                         if gw_id in self.discovered_devices:
                             # getting the same IP address as the gateway
                             gw_dev = self.discovered_devices[gw_id]
                             defaults[CONF_HOST] = gw_dev.get("ip")
-                        defaults[CONF_PROTOCOL_VERSION] = "sub_device"
+                        defaults[CONF_DEVICE_CID] = cloud_devs[dev_id].get(CONF_NODEID)
 
             schema = schema_defaults(DEVICE_SCHEMA, **defaults)
 

@@ -29,6 +29,7 @@ from .const import (
     ATTR_STATE,
     ATTR_UPDATED_AT,
     CONF_DEFAULT_VALUE,
+    CONF_DEVICE_CID,
     CONF_ENABLE_DEBUG,
     CONF_LOCAL_KEY,
     CONF_MODEL,
@@ -190,6 +191,7 @@ class TuyaDevice(pytuya.TuyaListener, pytuya.ContextualLogger):
                 self._dev_config_entry[CONF_DEVICE_ID],
                 self._local_key,
                 self._dev_config_entry[CONF_PROTOCOL_VERSION],
+                self._dev_config_entry.get(CONF_DEVICE_CID, ""),
                 self._dev_config_entry.get(CONF_ENABLE_DEBUG, False),
                 self,
             )

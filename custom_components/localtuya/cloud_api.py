@@ -151,7 +151,7 @@ class TuyaCloudApi:
             dev_id = dev[CONF_ID]
             if dev[CONF_SUB] and CONF_NODEID in dev:
                 # subdevice (Zigbee): will use the cid as the real id
-                dev_id = dev[CONF_NODEID]
+                # dev_id = dev[CONF_NODEID]
                 for dev2 in r_json["result"]:
                     if (
                         dev[CONF_LOCAL_KEY] == dev2[CONF_LOCAL_KEY]

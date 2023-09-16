@@ -217,7 +217,7 @@ payload_dict = {
     },
     # subdevices (namely: Zigbee devices), that can be operated through a gateway
     "sub_device": {
-        AP_CONFIG: {  # [BETA] Set Control Values on Device
+        AP_CONFIG: {
             "command": {"cid": "", "t": ""},
         },
         CONTROL: {  # Set Control Values on Device
@@ -570,7 +570,7 @@ class TuyaProtocol(asyncio.Protocol, ContextualLogger):
     """Implementation of the Tuya protocol."""
 
     def __init__(
-        self, dev_id, local_key, protocol_version, enable_debug, on_connected, listener
+        self, dev_id, local_key, protocol_version, dev_cid, enable_debug, on_connected, listener
     ):
         """
         Initialize a new TuyaInterface.
@@ -591,10 +591,7 @@ class TuyaProtocol(asyncio.Protocol, ContextualLogger):
         self.real_local_key = self.local_key
         self.dev_type = "type_0a"
         self.dps_to_request = {}
-
-        if protocol_version == "sub_device":
-            self.dev_type = protocol_version
-            protocol_version = "3.3"
+        self.cid = dev_cid
 
         if protocol_version:
             self.set_version(float(protocol_version))
@@ -602,6 +599,10 @@ class TuyaProtocol(asyncio.Protocol, ContextualLogger):
             # make sure we call our set_version() and not a subclass since some of
             # them (such as BulbDevice) make connections when called
             TuyaProtocol.set_version(self, 3.1)
+
+        # if a cid is provided, this is a sub_device (such as Zigbee)
+        if self.cid != "":
+            self.dev_type = "sub_device"
 
         self.cipher = AESCipher(self.local_key)
         self.seqno = 1
@@ -1159,10 +1160,7 @@ class TuyaProtocol(asyncio.Protocol, ContextualLogger):
             else:
                 json_data["uid"] = self.id
         if "cid" in json_data:
-            if devId is not None:
-                json_data["cid"] = devId
-            else:
-                json_data["cid"] = self.id
+                json_data["cid"] = self.cid
         if "t" in json_data:
             if json_data["t"] == "int":
                 json_data["t"] = int(time.time())
@@ -1199,7 +1197,8 @@ async def connect(
     device_id,
     local_key,
     protocol_version,
-    enable_debug,
+    device_cid = '',
+    enable_debug = False,
     listener=None,
     port=6668,
     timeout=5,
@@ -1212,6 +1211,7 @@ async def connect(
             device_id,
             local_key,
             protocol_version,
+            device_cid,
             enable_debug,
             on_connected,
             listener or EmptyListener(),
