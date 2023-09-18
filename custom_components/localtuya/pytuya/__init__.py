@@ -571,7 +571,14 @@ class TuyaProtocol(asyncio.Protocol, ContextualLogger):
     """Implementation of the Tuya protocol."""
 
     def __init__(
-        self, dev_id, local_key, protocol_version, dev_cid, enable_debug, on_connected, listener
+        self,
+        dev_id,
+        local_key,
+        protocol_version,
+        dev_cid,
+        enable_debug,
+        on_connected,
+        listener,
     ):
         """
         Initialize a new TuyaInterface.
@@ -1165,7 +1172,7 @@ class TuyaProtocol(asyncio.Protocol, ContextualLogger):
             else:
                 json_data["uid"] = self.id
         if "cid" in json_data:
-                json_data["cid"] = self.cid
+            json_data["cid"] = self.cid
         if "t" in json_data:
             if json_data["t"] == "int":
                 json_data["t"] = int(time.time())
@@ -1202,8 +1209,8 @@ async def connect(
     device_id,
     local_key,
     protocol_version,
-    device_cid = '',
-    enable_debug = False,
+    device_cid="",
+    enable_debug=False,
     listener=None,
     port=6668,
     timeout=5,

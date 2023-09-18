@@ -94,11 +94,12 @@ DEVICE_SCHEMA = vol.Schema(
         vol.Required(CONF_FRIENDLY_NAME): cv.string,
         vol.Required(CONF_HOST): cv.string,
         vol.Required(CONF_DEVICE_ID): cv.string,
-        vol.Optional(CONF_DEVICE_CID): cv.string,
         vol.Required(CONF_LOCAL_KEY): cv.string,
         vol.Required(CONF_PROTOCOL_VERSION, default="3.3"): vol.In(
             ["3.1", "3.2", "3.3", "3.4"]
         ),
+        vol.Optional(CONF_DEVICE_CID): cv.string,
+        vol.Optional(CONF_GW_ID): cv.string,
         vol.Required(CONF_ENABLE_DEBUG, default=False): bool,
         vol.Optional(CONF_SCAN_INTERVAL): int,
         vol.Optional(CONF_MANUAL_DPS): cv.string,
@@ -652,7 +653,10 @@ class LocalTuyaOptionsFlowHandler(config_entries.OptionsFlow):
                 if dev_id in cloud_devs:
                     defaults[CONF_LOCAL_KEY] = cloud_devs[dev_id].get(CONF_LOCAL_KEY)
                     defaults[CONF_FRIENDLY_NAME] = cloud_devs[dev_id].get(CONF_NAME)
-                    if cloud_devs[dev_id][CONF_SUB] and CONF_NODEID in cloud_devs[dev_id]:
+                    if (
+                        cloud_devs[dev_id][CONF_SUB]
+                        and CONF_NODEID in cloud_devs[dev_id]
+                    ):
                         # this is a subdevice (Zigbee)
                         gw_id = cloud_devs[dev_id].get(CONF_GW_ID)
                         if gw_id in self.discovered_devices:
@@ -660,6 +664,7 @@ class LocalTuyaOptionsFlowHandler(config_entries.OptionsFlow):
                             gw_dev = self.discovered_devices[gw_id]
                             defaults[CONF_HOST] = gw_dev.get("ip")
                         defaults[CONF_DEVICE_CID] = cloud_devs[dev_id].get(CONF_NODEID)
+                        defaults[CONF_GW_ID] = gw_id
 
             schema = schema_defaults(DEVICE_SCHEMA, **defaults)
 

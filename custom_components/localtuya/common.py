@@ -124,8 +124,9 @@ def async_config_entry_by_device_id(hass, device_id):
     """Look up config entry by device id."""
     current_entries = hass.config_entries.async_entries(DOMAIN)
     for entry in current_entries:
-        if device_id in entry.data[CONF_DEVICES]:
-            return entry
+        # if device_id in entry.data[CONF_DEVICES]:
+        # simplifying: assuming only one conf entry for localtuya
+        return entry
     return None
 
 
@@ -544,7 +545,7 @@ class LocalTuyaEntity(RestoreEntity, pytuya.ContextualLogger):
 
         return self._default_value
 
-    def entity_default_value(self):  # pylint: disable=no-self-use
+    def entity_default_value(self):
         """Return default value of the entity type.
 
         Override in subclasses to specify the default value for the entity.
