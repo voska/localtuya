@@ -222,7 +222,7 @@ payload_dict = {
         },
         CONTROL: {  # Set Control Values on Device
             "3.3": {"cid": "", "t": ""},
-            "3.4": { "command": {"protocol": 5, "t": "int", "data": "", "cid": ""} },
+            "3.4": {"protocol": 5, "t": "int", "data": "", "cid": ""},
         },
         STATUS: {  # Get Status from Device
             "command": {"cid": ""},
