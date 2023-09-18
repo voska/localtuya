@@ -221,7 +221,8 @@ payload_dict = {
             "command": {"cid": "", "t": ""},
         },
         CONTROL: {  # Set Control Values on Device
-            "command": {"cid": "", "t": ""},
+            "3.3": {"cid": "", "t": ""},
+            "3.4": { "command": {"protocol": 5, "t": "int", "data": "", "cid": ""} },
         },
         STATUS: {  # Get Status from Device
             "command": {"cid": ""},
@@ -1136,6 +1137,10 @@ class TuyaProtocol(asyncio.Protocol, ContextualLogger):
                 and "command_override" in payload_dict["type_0a"][command]
             ):
                 command_override = payload_dict["type_0a"][command]["command_override"]
+
+        if self.dev_type == "sub_device" and command == CONTROL:
+            # subdevices use different commands depending on the protocol version of the gateway
+            json_data = payload_dict[self.dev_type][command][str(self.version)]
 
         if command_override is None:
             command_override = command
