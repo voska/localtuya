@@ -251,7 +251,7 @@ async def validate_input(hass: core.HomeAssistant, data):
             data[CONF_DEVICE_ID],
             data[CONF_LOCAL_KEY],
             data[CONF_PROTOCOL_VERSION],
-            data[CONF_DEVICE_CID],
+            data.get(CONF_DEVICE_CID, ""),
             data[CONF_ENABLE_DEBUG],
         )
         if CONF_RESET_DPIDS in data:
