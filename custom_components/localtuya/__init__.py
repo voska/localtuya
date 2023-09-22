@@ -171,7 +171,7 @@ async def async_setup(hass: HomeAssistant, config: dict):
         _handle_reload,
     )
 
-    hass.helpers.service.async_register_admin_service(
+    hass.services.async_register(
         DOMAIN, SERVICE_SET_DP, _handle_set_dp, schema=SERVICE_SET_DP_SCHEMA
     )
 
