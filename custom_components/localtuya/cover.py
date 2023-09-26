@@ -110,10 +110,8 @@ class LocaltuyaCover(LocalTuyaEntity, CoverEntity):
         if self._config[CONF_POSITIONING_MODE] == COVER_MODE_NONE:
             return False
 
-        if self._current_cover_position <= 50:
+        if self._current_cover_position == 0:
             return True
-        if self._current_cover_position > 50:
-            return False
         return False
 
     async def async_set_cover_position(self, **kwargs):
