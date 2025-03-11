@@ -145,8 +145,9 @@ class LocaltuyaCover(LocalTuyaEntity, CoverEntity):
 
     async def async_open_cover(self, **kwargs):
         """Open the cover."""
-        self.debug("Launching command %s to cover ", self._open_cmd)
-        await self._device.set_dp(self._open_cmd, self._dp_id)
+        cmd = self._close_cmd if self._config[CONF_POSITION_INVERTED] else self._open_cmd
+        self.debug("Launching command %s to cover ", cmd)
+        await self._device.set_dp(cmd, self._dp_id)
         if self._config[CONF_POSITIONING_MODE] == COVER_MODE_TIMED:
             # for timed positioning, stop the cover after a full opening timespan
             # instead of waiting the internal timeout
@@ -158,8 +159,9 @@ class LocaltuyaCover(LocalTuyaEntity, CoverEntity):
 
     async def async_close_cover(self, **kwargs):
         """Close cover."""
-        self.debug("Launching command %s to cover ", self._close_cmd)
-        await self._device.set_dp(self._close_cmd, self._dp_id)
+        cmd = self._open_cmd if self._config[CONF_POSITION_INVERTED] else self._close_cmd
+        self.debug("Launching command %s to cover ", cmd)
+        await self._device.set_dp(cmd, self._dp_id)
         if self._config[CONF_POSITIONING_MODE] == COVER_MODE_TIMED:
             # for timed positioning, stop the cover after a full opening timespan
             # instead of waiting the internal timeout
